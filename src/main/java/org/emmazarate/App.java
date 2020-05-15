@@ -7,7 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- * JavaFX App
+ * JavaFX Conway's Game of Life App
  */
 public class App extends Application {
 
