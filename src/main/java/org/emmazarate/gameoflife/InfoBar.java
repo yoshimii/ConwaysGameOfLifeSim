@@ -1,10 +1,10 @@
-package org.emmazarate;
-
+package org.emmazarate.gameoflife;
+// JavaFX imports
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import org.emmazarate.gameoflife.model.CellState;
 
 public class InfoBar extends HBox {
 
@@ -25,9 +25,9 @@ public class InfoBar extends HBox {
         this.getChildren().addAll(this.editingTool, spacer, this.cursor);
     }
 
-    public void setDrawMode(int drawMode) {
+    public void setDrawMode(CellState drawMode) {
         String drawModeString;
-        if (drawMode == Simulation.ALIVE) {
+        if (drawMode == CellState.ALIVE) {
             drawModeString = "Drawing";
         } else {
             drawModeString = "Erasing";

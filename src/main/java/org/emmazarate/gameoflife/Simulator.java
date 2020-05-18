@@ -1,5 +1,5 @@
-package org.emmazarate;
-
+package org.emmazarate.gameoflife;
+// JavaFX imports
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -18,7 +18,7 @@ public class Simulator {
         this.timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    private void doStep(ActionEvent actionEvent) {
+    private void doStep(ActionEvent actionEvent) { // ActionEvent can represent a Button fire or KeyFrame completion and more
         this.simulation.step();
         this.mainView.draw();
     }
