@@ -1,26 +1,28 @@
 package org.emmazarate.gameoflife;
-// JavaFX imports
+import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.util.Duration;
 
-public class Simulator {
 
+public class Simulator {
+// business logic class, only deals with model objects or other business logic components
     private Timeline timeline;
-    private MainView  mainView; // gives us access to draw function
+    private BoardViewModel boardViewModel;
     private Simulation simulation;
 
-    public Simulator(MainView mainView, Simulation simulation) {
-        this.mainView = mainView;
+    public Simulator(BoardViewModel boardViewModel, Simulation simulation) {
+        this.boardViewModel = boardViewModel;
         this.simulation = simulation;
-        this.timeline = new Timeline(new KeyFrame(Duration.millis(500), this::doStep));
+        this.timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> this.doStep()));
         this.timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    private void doStep(ActionEvent actionEvent) { // ActionEvent can represent a Button fire or KeyFrame completion and more
+    public void doStep() { // ActionEvent can represent a Button fire or KeyFrame completion and more
+
         this.simulation.step();
-        this.mainView.draw();
+        this.boardViewModel.setBoard(this.simulation.getBoard());
     }
 
     public void start() {

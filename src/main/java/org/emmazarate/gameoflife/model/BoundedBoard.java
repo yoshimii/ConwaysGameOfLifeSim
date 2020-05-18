@@ -1,7 +1,5 @@
 package org.emmazarate.gameoflife.model;
 
-import org.emmazarate.gameoflife.Simulation;
-
 public class BoundedBoard implements Board{
 
     private int width;

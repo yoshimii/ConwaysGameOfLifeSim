@@ -1,10 +1,10 @@
 package org.emmazarate.gameoflife;
-// JavaFX imports
+import org.emmazarate.gameoflife.model.CellState;
+
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import org.emmazarate.gameoflife.model.CellState;
 
 public class InfoBar extends HBox {
 

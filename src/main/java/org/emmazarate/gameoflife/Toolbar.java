@@ -1,18 +1,27 @@
 package org.emmazarate.gameoflife;
+import org.emmazarate.gameoflife.ViewModel.ApplicationState;
+import org.emmazarate.gameoflife.ViewModel.ApplicationViewModel;
+import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
+import org.emmazarate.gameoflife.model.CellState;
+import org.emmazarate.gameoflife.model.StandardRule;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
-import org.emmazarate.gameoflife.model.CellState;
+
 
 public class Toolbar extends ToolBar {
 
     private MainView mainView;
+    private ApplicationViewModel applicationViewModel;
+    private BoardViewModel boardViewModel;
 
     private Simulator simulator;
 
-    public Toolbar(MainView mainView) {
+    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel) {
         this.mainView = mainView;
+        this.applicationViewModel = applicationViewModel;
+        this.boardViewModel = boardViewModel;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -39,9 +48,8 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleReset(ActionEvent actionEvent) {
-        this.mainView.setApplicationState(MainView.EDITING);
+        this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
         this.simulator = null;
-        this.mainView.draw();
     }
 
     private void handleDraw(ActionEvent actionEvent) {
@@ -60,14 +68,12 @@ public class Toolbar extends ToolBar {
 
         switchToSimulateState();
 
-        this.mainView.getSimulation().step();
-        mainView.draw();
+        this.simulator.doStep();
     }
 
     private void switchToSimulateState() {
-        if (this.mainView.getApplicationState() == MainView.EDITING) {
-            this.mainView.setApplicationState(MainView.SIMULATING);
-            this.simulator = new Simulator(this.mainView, this.mainView.getSimulation());
-        }
+        this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
+        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
+        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 }

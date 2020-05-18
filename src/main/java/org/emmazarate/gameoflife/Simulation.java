@@ -1,6 +1,5 @@
 package org.emmazarate.gameoflife;
 
-import javafx.scene.control.Cell;
 import org.emmazarate.gameoflife.model.Board;
 import org.emmazarate.gameoflife.model.CellState;
 import org.emmazarate.gameoflife.model.SimulationRule;
