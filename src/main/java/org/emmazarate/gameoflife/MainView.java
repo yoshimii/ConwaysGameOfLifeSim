@@ -1,7 +1,8 @@
 package org.emmazarate.gameoflife;
-import org.emmazarate.gameoflife.ViewModel.ApplicationState;
 import org.emmazarate.gameoflife.ViewModel.ApplicationViewModel;
 import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
+import org.emmazarate.gameoflife.ViewModel.EditorViewModel;
+import org.emmazarate.gameoflife.ViewModel.SimulationViewModel;
 import org.emmazarate.gameoflife.model.Board;
 import org.emmazarate.gameoflife.model.CellState;
 
@@ -20,26 +21,18 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
 
-    private InfoBar infoBar = new InfoBar();
+    private InfoBar infoBar;
     private Canvas canvas;
 
     private Affine affine;
 
-    private Board initialBoard;
-
-    private CellState drawMode = CellState.ALIVE;
-
-    private ApplicationViewModel applicationViewModel;
+    private EditorViewModel editorViewModel;
     private BoardViewModel boardViewModel;
 
-    private boolean isDrawingEnabled = true;
-
-    public MainView(ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel, Board initialBoard) {
-        this.applicationViewModel = applicationViewModel;
+    public MainView(ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel, SimulationViewModel simulationViewModel) {
         this.boardViewModel = boardViewModel;
-        this.initialBoard = initialBoard;
+        this.editorViewModel = editorViewModel;
 
-        this.applicationViewModel.listenToApplicationState(this::onApplicationStateChanged);
         this.boardViewModel.listenToBoard(this::onBoardChanged);
 
 
@@ -50,10 +43,9 @@ public class MainView extends VBox {
 
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this, applicationViewModel, boardViewModel);
+        Toolbar toolbar = new Toolbar(editorViewModel, applicationViewModel, simulationViewModel);
 
-        this.infoBar = new InfoBar();
-        this.infoBar.setDrawMode(this.drawMode);
+        this.infoBar = new InfoBar(editorViewModel);
         this.infoBar.setCursorPosition(0, 0);
 
         Pane spacer = new Pane();
@@ -65,17 +57,6 @@ public class MainView extends VBox {
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
-    }
-
-    private void onApplicationStateChanged(ApplicationState state) {
-        if(state == ApplicationState.EDITING) {
-            this.isDrawingEnabled = true;
-            this.boardViewModel.setBoard(this.initialBoard);
-        } else if (state == ApplicationState.SIMULATING){
-            this.isDrawingEnabled = false;
-        } else {
-            throw new IllegalArgumentException("Unsupported ApplicationState" + state.name());
-        }
     }
 
     private void onBoardChanged(Board board) {
@@ -90,19 +71,13 @@ public class MainView extends VBox {
 
     private void onKeyPressed(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.D) {
-            this.drawMode = CellState.ALIVE;
-            System.out.println("Alive draw mode");
+            this.editorViewModel.setDrawMode(CellState.ALIVE);
         } else if(keyEvent.getCode() == KeyCode.E){
-            this.drawMode = CellState.DEAD;
-            System.out.println("Dead draw mode");
+            this.editorViewModel.setDrawMode(CellState.DEAD);
         }
     }
 
     private void handleDraw(MouseEvent event) {
-
-        if (!isDrawingEnabled) {
-            return;
-        }
 
         Point2D simCoordinate = this.getSimulationCoordinates(event);
 
@@ -111,8 +86,7 @@ public class MainView extends VBox {
 
         System.out.println(simX + "," + simY);
 
-        this.initialBoard.setState(simX, simY, drawMode); // changing state on initial board
-        this.boardViewModel.setBoard(this.initialBoard); // telling the view model that initial board is updated
+        this.editorViewModel.boardPressed(simX, simY);
     }
 
     private Point2D getSimulationCoordinates(MouseEvent mouseEvent) {
@@ -160,10 +134,5 @@ public class MainView extends VBox {
                     g.fillRect(x,y,1,1);
             }
         }
-    }
-
-    public void setDrawMode(CellState newDrawMode) {
-        this.drawMode = newDrawMode;
-        this.infoBar.setDrawMode(newDrawMode);
     }
 }

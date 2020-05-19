@@ -1,7 +1,5 @@
 package org.emmazarate.gameoflife;
-import org.emmazarate.gameoflife.ViewModel.ApplicationState;
-import org.emmazarate.gameoflife.ViewModel.ApplicationViewModel;
-import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
+import org.emmazarate.gameoflife.ViewModel.*;
 import org.emmazarate.gameoflife.model.CellState;
 import org.emmazarate.gameoflife.model.StandardRule;
 
@@ -12,16 +10,14 @@ import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
 
-    private MainView mainView;
     private ApplicationViewModel applicationViewModel;
-    private BoardViewModel boardViewModel;
+    private SimulationViewModel simulationViewModel;
+    private EditorViewModel editorViewModel;
 
-    private Simulator simulator;
-
-    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel) {
-        this.mainView = mainView;
+    public Toolbar(EditorViewModel editorViewModel, ApplicationViewModel applicationViewModel, SimulationViewModel simulationViewModel) {
+        this.editorViewModel = editorViewModel;
         this.applicationViewModel = applicationViewModel;
-        this.boardViewModel = boardViewModel;
+        this.simulationViewModel = simulationViewModel;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -40,27 +36,26 @@ public class Toolbar extends ToolBar {
 
     private void handleStart(ActionEvent actionEvent) {
         switchToSimulateState();
-        this.simulator.start();
+        this.simulationViewModel.start();
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        this.simulator.stop();
+        simulationViewModel.stop();
     }
 
     private void handleReset(ActionEvent actionEvent) {
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
-        this.simulator = null;
     }
 
     private void handleDraw(ActionEvent actionEvent) {
         System.out.println("Draw pressed");
-        this.mainView.setDrawMode(CellState.ALIVE);
+        this.editorViewModel.setDrawMode(CellState.ALIVE);
 
     }
 
     private void handleErase(ActionEvent actionEvent) {
         System.out.println("Erase pressed");
-        this.mainView.setDrawMode(CellState.DEAD);
+        this.editorViewModel.setDrawMode(CellState.DEAD);
     }
 
     private void handleStep(ActionEvent actionEvent) {
@@ -68,12 +63,10 @@ public class Toolbar extends ToolBar {
 
         switchToSimulateState();
 
-        this.simulator.doStep();
+        this.simulationViewModel.doStep();
     }
 
     private void switchToSimulateState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
-        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 }

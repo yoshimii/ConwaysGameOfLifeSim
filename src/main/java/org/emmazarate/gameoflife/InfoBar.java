@@ -1,4 +1,5 @@
 package org.emmazarate.gameoflife;
+import org.emmazarate.gameoflife.ViewModel.EditorViewModel;
 import org.emmazarate.gameoflife.model.CellState;
 
 import javafx.scene.control.Label;
@@ -13,7 +14,8 @@ public class InfoBar extends HBox {
 
     private Label cursor;
     private Label editingTool;
-    public InfoBar() {
+    public InfoBar(EditorViewModel editorViewModel) {
+        editorViewModel.listenToDrawMode(this::setDrawMode);
         this.editingTool = new Label("Draw mode: Drawing");
         this.cursor = new Label("Cursor: (0, 0)");
 
@@ -25,7 +27,7 @@ public class InfoBar extends HBox {
         this.getChildren().addAll(this.editingTool, spacer, this.cursor);
     }
 
-    public void setDrawMode(CellState drawMode) {
+    private void setDrawMode(CellState drawMode) {
         String drawModeString;
         if (drawMode == CellState.ALIVE) {
             drawModeString = "Drawing";

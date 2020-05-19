@@ -1,7 +1,5 @@
 package org.emmazarate.gameoflife;
-import org.emmazarate.gameoflife.ViewModel.ApplicationState;
-import org.emmazarate.gameoflife.ViewModel.ApplicationViewModel;
-import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
+import org.emmazarate.gameoflife.ViewModel.*;
 import org.emmazarate.gameoflife.model.Board;
 import org.emmazarate.gameoflife.model.BoundedBoard;
 
@@ -19,10 +17,13 @@ public class App extends Application {
     public void start(Stage stage) {
         ApplicationViewModel applicationViewModel = new ApplicationViewModel(ApplicationState.EDITING);
         BoardViewModel boardViewModel = new BoardViewModel();
-
         Board board = new BoundedBoard(10, 10);
+        EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, board);
+        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
+        applicationViewModel.listenToApplicationState(editorViewModel::onAppStateChanged);
+        applicationViewModel.listenToApplicationState(simulationViewModel::onAppStateChanged);
 
-        MainView mainView = new MainView(applicationViewModel, boardViewModel, board);
+        MainView mainView = new MainView(applicationViewModel, boardViewModel, editorViewModel, simulationViewModel );
         Scene scene = new Scene(mainView, 640, 480);
         stage.setScene(scene);
         stage.show();
