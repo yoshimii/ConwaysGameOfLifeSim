@@ -1,5 +1,5 @@
 package org.emmazarate.gameoflife;
-import org.emmazarate.gameoflife.ViewModel.EditorViewModel;
+import org.emmazarate.gameoflife.viewmodel.EditorViewModel;
 import org.emmazarate.gameoflife.model.CellState;
 
 import javafx.scene.control.Label;
