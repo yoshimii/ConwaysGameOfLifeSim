@@ -1,4 +1,5 @@
 package org.emmazarate.gameoflife;
+import org.emmazarate.gameoflife.util.event.EventBus;
 import org.emmazarate.gameoflife.viewmodel.*;
 import org.emmazarate.gameoflife.model.CellState;
 
@@ -9,14 +10,13 @@ import javafx.scene.control.ToolBar;
 
 public class Toolbar extends ToolBar {
 
-    private ApplicationViewModel applicationViewModel;
-    private SimulationViewModel simulationViewModel;
+    private EventBus eventBus;
+
     private EditorViewModel editorViewModel;
 
-    public Toolbar(EditorViewModel editorViewModel, ApplicationViewModel applicationViewModel, SimulationViewModel simulationViewModel) {
+    public Toolbar(EditorViewModel editorViewModel, EventBus eventBus) {
         this.editorViewModel = editorViewModel;
-        this.applicationViewModel = applicationViewModel;
-        this.simulationViewModel = simulationViewModel;
+        this.eventBus = eventBus;
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
         Button erase = new Button("Erase");
@@ -34,38 +34,28 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleStart(ActionEvent actionEvent) {
-        switchToSimulateState();
-        this.simulationViewModel.start();
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.START));
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        simulationViewModel.stop();
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STOP));
+    }
+
+    private void handleStep(ActionEvent actionEvent) {
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STEP));
     }
 
     private void handleReset(ActionEvent actionEvent) {
-        this.applicationViewModel.getApplicationState().set(ApplicationState.EDITING);
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.RESET));
     }
 
     private void handleDraw(ActionEvent actionEvent) {
         System.out.println("Draw pressed");
         this.editorViewModel.getDrawMode().set(CellState.ALIVE);
-
     }
 
     private void handleErase(ActionEvent actionEvent) {
         System.out.println("Erase pressed");
         this.editorViewModel.getDrawMode().set(CellState.DEAD);
-    }
-
-    private void handleStep(ActionEvent actionEvent) {
-        System.out.println("Step pressed");
-
-        switchToSimulateState();
-
-        this.simulationViewModel.doStep();
-    }
-
-    private void switchToSimulateState() {
-        this.applicationViewModel.getApplicationState().set(ApplicationState.SIMULATING);
     }
 }

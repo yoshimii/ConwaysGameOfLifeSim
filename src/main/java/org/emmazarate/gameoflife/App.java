@@ -1,4 +1,5 @@
 package org.emmazarate.gameoflife;
+import org.emmazarate.gameoflife.util.event.EventBus;
 import org.emmazarate.gameoflife.view.SimulationCanvas;
 import org.emmazarate.gameoflife.viewmodel.*;
 import org.emmazarate.gameoflife.model.Board;
@@ -16,19 +17,21 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        EventBus eventBus = new EventBus();
+
         ApplicationViewModel applicationViewModel = new ApplicationViewModel();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board board = new BoundedBoard(1200, 800);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, board);
-        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
+        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel, applicationViewModel, editorViewModel);
+        eventBus.listenFor(SimulatorEvent.class, simulationViewModel::handle);
 
         applicationViewModel.getApplicationState().listen(editorViewModel::onAppStateChanged);
-        applicationViewModel.getApplicationState().listen(simulationViewModel::onAppStateChanged);
 
         boardViewModel.getBoard().set(board);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(editorViewModel, boardViewModel);
-        Toolbar toolbar = new Toolbar(editorViewModel, applicationViewModel, simulationViewModel);
+        Toolbar toolbar = new Toolbar(editorViewModel, eventBus);
         InfoBar infoBar = new InfoBar(editorViewModel);
 
         MainView mainView = new MainView(editorViewModel);

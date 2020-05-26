@@ -4,4 +4,5 @@ module org.emmazarate {
     exports org.emmazarate.gameoflife.model;
     exports org.emmazarate.gameoflife.viewmodel;
     exports org.emmazarate.gameoflife.util;
+    exports org.emmazarate.gameoflife.util.event;
 }
