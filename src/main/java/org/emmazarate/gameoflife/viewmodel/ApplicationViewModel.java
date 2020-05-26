@@ -1,4 +1,4 @@
-package org.emmazarate.gameoflife.ViewModel;
+package org.emmazarate.gameoflife.viewmodel;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +15,6 @@ public class ApplicationViewModel {
 
     public void listenToApplicationState(SimpleChangeListener<ApplicationState> listener) {
         this.applicationStateListeners.add(listener);
-    }
-
-    public ApplicationState getCurrentState() {
-        return currentState;
     }
 
     public void setCurrentState(ApplicationState newState) {

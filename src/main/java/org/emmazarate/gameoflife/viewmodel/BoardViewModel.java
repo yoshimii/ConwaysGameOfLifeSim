@@ -1,4 +1,4 @@
-package org.emmazarate.gameoflife.ViewModel;
+package org.emmazarate.gameoflife.viewmodel;
 import org.emmazarate.gameoflife.model.Board;
 
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package org.emmazarate.gameoflife.ViewModel;
+package org.emmazarate.gameoflife.viewmodel;
 
 public enum ApplicationState {
     EDITING,

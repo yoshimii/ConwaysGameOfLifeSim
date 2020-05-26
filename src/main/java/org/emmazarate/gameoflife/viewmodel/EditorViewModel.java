@@ -1,6 +1,5 @@
-package org.emmazarate.gameoflife.ViewModel;
+package org.emmazarate.gameoflife.viewmodel;
 
-import javafx.scene.shape.DrawMode;
 import org.emmazarate.gameoflife.model.Board;
 import org.emmazarate.gameoflife.model.CellState;
 

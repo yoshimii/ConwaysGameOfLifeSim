@@ -1,7 +1,6 @@
 package org.emmazarate.gameoflife;
-import org.emmazarate.gameoflife.ViewModel.*;
+import org.emmazarate.gameoflife.viewmodel.*;
 import org.emmazarate.gameoflife.model.CellState;
-import org.emmazarate.gameoflife.model.StandardRule;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;

@@ -1,6 +1,5 @@
-package org.emmazarate.gameoflife.ViewModel;
+package org.emmazarate.gameoflife.viewmodel;
 import org.emmazarate.gameoflife.Simulation;
-import org.emmazarate.gameoflife.ViewModel.BoardViewModel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
