@@ -35,6 +35,7 @@ public class SimulationViewModel {
                 stop();
                 break;
             case STEP:
+                doStep();
                 break;
             case RESET:
                reset();
