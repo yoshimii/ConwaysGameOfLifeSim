@@ -1,5 +1,6 @@
 package org.emmazarate.gameoflife.view;
 import org.emmazarate.gameoflife.model.Board;
+import org.emmazarate.gameoflife.model.CellPosition;
 import org.emmazarate.gameoflife.model.CellState;
 import org.emmazarate.gameoflife.viewmodel.BoardViewModel;
 import org.emmazarate.gameoflife.viewmodel.EditorViewModel;
@@ -24,11 +25,13 @@ public class SimulationCanvas extends Pane {
     public SimulationCanvas(EditorViewModel editorViewModel, BoardViewModel boardViewModel) {
         this.editorViewModel = editorViewModel;
         this.boardViewModel = boardViewModel;
-        boardViewModel.listenToBoard(this::draw);
+        boardViewModel.getBoard().listen(this::draw);
+        editorViewModel.getCursorPosition().listen(cellPosition -> draw(boardViewModel.getBoard().get()));
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
         this.canvas.setOnMouseDragged(this::handleDraw);
+        this.canvas.setOnMouseMoved(this::handleCursorMoved);
         this.canvas.widthProperty().bind(this.widthProperty());
         this.canvas.heightProperty().bind(this.heightProperty());
         this.getChildren().add(this.canvas);
@@ -37,30 +40,29 @@ public class SimulationCanvas extends Pane {
         this.affine.appendScale(400 / 10f, 400 / 10f);
     }
 
+    private void handleCursorMoved(MouseEvent event) {
+        CellPosition cursorPosition = this.getSimulationCoordinates(event);
+        this.editorViewModel.getCursorPosition().set(cursorPosition);
+    }
+
     @Override
     public void resize(double v, double v1) {
         super.resize(v, v1);
-        draw(boardViewModel.getBoard());
+        draw(boardViewModel.getBoard().get());
     }
 
     private void handleDraw(MouseEvent event) {
-
-        Point2D simCoordinate = this.getSimulationCoordinates(event);
-
-        int simX = (int) simCoordinate.getX();
-        int simY = (int) simCoordinate.getY();
-
-        System.out.println(simX + "," + simY);
-
-        this.editorViewModel.boardPressed(simX, simY);
+        CellPosition cursorPosition = this.getSimulationCoordinates(event);
+        this.editorViewModel.boardPressed(cursorPosition);
     }
 
-    private Point2D getSimulationCoordinates(MouseEvent mouseEvent) {
+    private CellPosition getSimulationCoordinates(MouseEvent mouseEvent) {
         double mouseX = mouseEvent.getX();
         double mouseY = mouseEvent.getY();
 
         try {
-            return this.affine.inverseTransform(mouseX, mouseY);
+            Point2D simCoordinate = this.affine.inverseTransform(mouseX, mouseY);
+            return new CellPosition((int) simCoordinate.getX(), (int) simCoordinate.getY());
         } catch (NonInvertibleTransformException e) {
             throw new RuntimeException("Non invertible transform");
         }
@@ -75,6 +77,13 @@ public class SimulationCanvas extends Pane {
         g.fillRect(0, 0, 400, 400);
 
         this.drawSimulation(board);
+
+        // cursor hover cell color
+        if (editorViewModel.getCursorPosition().isPresent()) {
+            CellPosition cursor = editorViewModel.getCursorPosition().get();
+            g.setFill(new Color(1, 1, 0, 0.5));
+            g.fillRect(cursor.getX(), cursor.getY(), 1, 1);
+        }
 
         //grid lines
         g.setStroke(Color.RED);

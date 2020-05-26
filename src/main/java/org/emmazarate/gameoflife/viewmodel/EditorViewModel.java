@@ -1,15 +1,17 @@
 package org.emmazarate.gameoflife.viewmodel;
 
 import org.emmazarate.gameoflife.model.Board;
+import org.emmazarate.gameoflife.model.CellPosition;
 import org.emmazarate.gameoflife.model.CellState;
+import org.emmazarate.gameoflife.util.Property;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class EditorViewModel {
 
-    private CellState drawMode = CellState.ALIVE;
-    private List<SimpleChangeListener<CellState>> drawModeListeners;
+    private Property<CellState> drawMode = new Property<>(CellState.ALIVE);
+    private Property<CellPosition> cursorPosition = new Property<>();
 
     private BoardViewModel boardViewModel;
     private Board editorBoard;
@@ -18,37 +20,29 @@ public class EditorViewModel {
     public EditorViewModel(BoardViewModel boardViewModel, Board editorBoard) {
         this.boardViewModel = boardViewModel;
         this.editorBoard = editorBoard;
-        this.drawModeListeners = new LinkedList<>();
-    }
-
-    public void listenToDrawMode(SimpleChangeListener<CellState> listener) {
-        drawModeListeners.add(listener);
     }
 
     public void onAppStateChanged(ApplicationState state) {
         if (state == ApplicationState.EDITING) {
             drawingEnabled = true;
-            this.boardViewModel.setBoard(editorBoard);
+            this.boardViewModel.getBoard().set(editorBoard);
         } else {
             drawingEnabled = false;
         }
     }
 
-    public void setDrawMode(CellState drawMode) {
-        this.drawMode = drawMode;
-        notifyDrawModeListeners();
-    }
-
-    private void notifyDrawModeListeners() {
-        for (SimpleChangeListener<CellState> drawModeListener: drawModeListeners) {
-            drawModeListener.valueChanged(drawMode);
-        }
-    }
-
-    public void boardPressed(int simX, int simY) {
+    public void boardPressed(CellPosition cursorPosition) {
         if (drawingEnabled) {
-            this.editorBoard.setState(simX, simY, drawMode); // changing state on initial board
-            this.boardViewModel.setBoard(this.editorBoard); // telling the view model that initial board is updated
+            this.editorBoard.setState(cursorPosition.getX(), cursorPosition.getY(), drawMode.get()); // changing state on initial board
+            this.boardViewModel.getBoard().set(this.editorBoard); // telling the view model that initial board is updated
         }
+    }
+
+    public Property<CellState> getDrawMode() {
+        return drawMode;
+    }
+
+    public Property<CellPosition> getCursorPosition() {
+        return cursorPosition;
     }
 }

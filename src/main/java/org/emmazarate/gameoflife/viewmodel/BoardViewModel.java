@@ -1,35 +1,13 @@
 package org.emmazarate.gameoflife.viewmodel;
-import org.emmazarate.gameoflife.model.Board;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.emmazarate.gameoflife.model.Board;
+import org.emmazarate.gameoflife.util.Property;
 
 public class BoardViewModel {
 
-    private Board board;
-    private List<SimpleChangeListener<Board>> boardListeners;
+    private Property<Board> board = new Property<>();
 
-    public BoardViewModel() {
-        this.boardListeners = new LinkedList<>(); // Listeners are good for linear search
-    }
-
-    public void listenToBoard(SimpleChangeListener<Board> listener) {
-        this.boardListeners.add(listener);
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-
-        notifyBoardListeners();
-    }
-
-    private void notifyBoardListeners() {
-        for (SimpleChangeListener<Board> boardListener : boardListeners) {
-            boardListener.valueChanged(this.board);
-        }
-    }
-
-    public Board getBoard() {
+    public Property<Board> getBoard() {
         return board;
     }
 }

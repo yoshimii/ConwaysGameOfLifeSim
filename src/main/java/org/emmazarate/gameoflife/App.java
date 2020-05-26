@@ -16,16 +16,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        ApplicationViewModel applicationViewModel = new ApplicationViewModel(ApplicationState.EDITING);
+        ApplicationViewModel applicationViewModel = new ApplicationViewModel();
         BoardViewModel boardViewModel = new BoardViewModel();
         Board board = new BoundedBoard(1200, 800);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, board);
         SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
 
-        applicationViewModel.listenToApplicationState(editorViewModel::onAppStateChanged);
-        applicationViewModel.listenToApplicationState(simulationViewModel::onAppStateChanged);
+        applicationViewModel.getApplicationState().listen(editorViewModel::onAppStateChanged);
+        applicationViewModel.getApplicationState().listen(simulationViewModel::onAppStateChanged);
 
-        boardViewModel.setBoard(board);
+        boardViewModel.getBoard().set(board);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(editorViewModel, boardViewModel);
         Toolbar toolbar = new Toolbar(editorViewModel, applicationViewModel, simulationViewModel);
